@@ -1,0 +1,51 @@
+from flask import Flask, request, redirect
+from caesar import rotate_string
+
+app = Flask(__name__)
+app.config['DEBUG'] = True
+
+form= '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            form {
+            background-color: #eee;
+            padding: 20px;
+            margin: 0 auto;
+            width: 540px;
+            font: 16px sans-serif;
+            border-radius: 10px;
+            }
+            textarea {{
+            margin: 10px 0;
+            width: 540px;
+            height: 120px;
+            }}
+        </style>
+    </head>
+   <body>
+        <form action="/encrypt" method="POST">
+                <label for ="Rotate_by">Rotate by:
+                <input id="Rotate_by" type="text" name="rot"/>
+            </label>
+            <textarea name="text" width="30" height="50">{0}</textarea>
+            <input type="submit"/>
+        </form>
+    </body>
+</html>
+'''
+
+@app.route("/")
+def index():
+    return form.format(' ')
+
+@app.route("/encrypt", methods=['POST'])
+def encrypt():
+    rot_by= int( request.form['rot'])
+    text_msg= request.form ['text']
+    en_msg=rotate_string(text_msg, rot_by)
+    ret_msg='''<h1>'''+en_msg+'''</h1>'''
+    return redirect("/?encrypt={0}" form.format(en_msg))
+
+app.run()
